@@ -4,7 +4,7 @@
 [![Latest Stable Version](https://img.shields.io/packagist/v/wizofgoz/laravel-opentracing.svg?style=flat-square)](https://packagist.org/packages/wizofgoz/laravel-opentracing)
 [![StyleCI](https://github.styleci.io/repos/271911972/shield?style=flat-square&branch=develop)](https://github.styleci.io/repos/271911972)
 [![Build Status](https://img.shields.io/travis/wizofgoz/laravel-opentracing/master.svg?style=flat-square)](https://travis-ci.org/wizofgoz/laravel-opentracing)
-[![Coverage Status](https://img.shields.io/coveralls/github/wizofgoz/laravel-opentracing/master.svg?style=flat-square)](https://coveralls.io/github/wizofgoz/laravel-opentracing?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/github/Wizofgoz/laravel-opentracing/badge.svg?branch=master)](https://coveralls.io/github/Wizofgoz/laravel-opentracing?branch=master)
 
 Reference implementation of the OpenTracing API for Laravel including a server-less local tracer for application
 logging purposes.
