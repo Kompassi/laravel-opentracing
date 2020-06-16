@@ -14,7 +14,6 @@ use Mockery;
 
 class TracingServiceProviderTest extends TestCase
 {
-
     public function tearDown(): void
     {
         Mockery::close();
