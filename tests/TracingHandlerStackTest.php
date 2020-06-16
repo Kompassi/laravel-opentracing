@@ -12,15 +12,13 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
-use Illuminate\Container\Container;
-use Illuminate\Contracts\Foundation\Application;
 use LaravelOpenTracing\TracingHandlerStack;
 use LaravelOpenTracing\TracingService;
 use Mockery;
 
-class TracingHandlerStackTest extends \PHPUnit_Framework_TestCase
+class TracingHandlerStackTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
 
@@ -29,14 +27,10 @@ class TracingHandlerStackTest extends \PHPUnit_Framework_TestCase
 
     public function testTraceContextHeadersAreSentInRequests()
     {
-        /** @var Application|Mockery\Mock $app */
-        $app = Container::setInstance(Mockery::mock(Application::class, \ArrayAccess::class)->makePartial());
-
-        $service = Mockery::mock(TracingService::class)->makePartial();
-        $service->shouldReceive('getInjectHeaders')->once()
-            ->andReturn(['test-trace-id' => 'deadbeefdeadbeef:beefdeadbeefdead:0:1']);
-
-        $app->shouldReceive('make')->with(TracingService::class)->once()->andReturn($service);
+        $this->partialMock(TracingService::class, function ($mock) {
+            $mock->shouldReceive('getInjectHeaders')->once()
+                ->andReturn(['test-trace-id' => 'deadbeefdeadbeef:beefdeadbeefdead:0:1']);
+        });
 
         $container = [];
         $history = Middleware::history($container);

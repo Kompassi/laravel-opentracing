@@ -9,6 +9,7 @@
 namespace LaravelOpenTracing;
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 use LaravelOpenTracing\Clients\ClientInterface;
 use LaravelOpenTracing\Clients\JaegerClient;
@@ -38,7 +39,7 @@ class TracingServiceProvider extends ServiceProvider
                 $this->mergeConfigFrom($cfgFile, 'tracing');
 
                 $clientType = $app['config']['tracing.type'] ?: 'local';
-                $clientClass = array_get(self::$client, $clientType, self::$client['local']);
+                $clientClass = Arr::get(self::$client, $clientType, self::$client['local']);
 
                 /** @var ClientInterface $client */
                 $client = new $clientClass($app['config']['tracing.clients.' . $clientType]);
@@ -81,6 +82,6 @@ class TracingServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([dirname(__DIR__) . '/config/tracing.php' => base_path('config/tracing.php')]);
+        $this->publishes([dirname(__DIR__) . '/config/tracing.php' => config_path('tracing.php')]);
     }
 }

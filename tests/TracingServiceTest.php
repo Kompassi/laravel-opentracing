@@ -17,9 +17,9 @@ use OpenTracing\SpanContext;
 use OpenTracing\Tracer;
 use const OpenTracing\Formats\HTTP_HEADERS;
 
-class TracingServiceTest extends \PHPUnit_Framework_TestCase
+class TracingServiceTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
 
@@ -45,6 +45,9 @@ class TracingServiceTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testEndTraceOnUnspecifiedScope()
     {
         $scope = Mockery::mock(Scope::class);

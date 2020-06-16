@@ -1,5 +1,5 @@
 {
-  "name": "taisph/laravel-opentracing",
+  "name": "wizofgoz/laravel-opentracing",
   "description": "",
   "keywords": [
     "opentracing",
@@ -9,30 +9,24 @@
   "license": "Apache-2.0",
   "authors": [
     {
-      "name": "Tais P. Hansen",
-      "email": "tais.hansen@gmail.com"
+      "name": "Jordan Gosney",
+      "email": "wizofgoz2@gmail.com"
     }
   ],
   "require": {
-    "php": ">=5.6",
+    "php": ">=7.3",
     "guzzlehttp/guzzle": "^6.2",
-    "illuminate/support": "^5.4.36",
-    "jonahgeorge/jaeger-client-php": "dev-feature/php56",
-    "opentracing/opentracing": "^1.0.0-beta5",
-    "paragonie/random_compat": "^2",
+    "illuminate/support": "^7.0",
+    "jonahgeorge/jaeger-client-php": "^0.6.0",
+    "opentracing/opentracing": "^1.0.0-beta6",
     "psr/cache": "~1.0.1"
   },
   "require-dev": {
     "mockery/mockery": "^1.2.2",
-    "php-coveralls/php-coveralls": "^2.1",
-    "phpunit/phpunit": "~5.7.27"
+    "orchestra/testbench": "^5.0",
+    "php-coveralls/php-coveralls": "^2.2",
+    "phpunit/phpunit": "^9.0"
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/taisph/jaeger-client-php"
-    }
-  ],
   "autoload": {
     "psr-4": {
       "LaravelOpenTracing\\": "src/"

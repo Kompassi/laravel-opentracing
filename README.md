@@ -1,10 +1,10 @@
 # OpenTracing for Laravel
 
-[![Total Downloads](https://img.shields.io/packagist/dt/taisph/laravel-opentracing.svg?style=flat-square)](https://packagist.org/packages/taisph/laravel-opentracing)
-[![Latest Stable Version](https://img.shields.io/packagist/v/taisph/laravel-opentracing.svg?style=flat-square)](https://packagist.org/packages/taisph/laravel-opentracing)
-[![StyleCI](https://github.styleci.io/repos/139591541/shield?style=flat-square&branch=develop)](https://github.styleci.io/repos/139591541)
-[![Build Status](https://img.shields.io/travis/taisph/laravel-opentracing/master.svg?style=flat-square)](https://travis-ci.org/taisph/laravel-opentracing)
-[![Coverage Status](https://img.shields.io/coveralls/github/taisph/laravel-opentracing/master.svg?style=flat-square)](https://coveralls.io/github/taisph/laravel-opentracing?branch=develop)
+[![Total Downloads](https://img.shields.io/packagist/dt/wizofgoz/laravel-opentracing.svg?style=flat-square)](https://packagist.org/packages/wizofgoz/laravel-opentracing)
+[![Latest Stable Version](https://img.shields.io/packagist/v/wizofgoz/laravel-opentracing.svg?style=flat-square)](https://packagist.org/packages/wizofgoz/laravel-opentracing)
+[![StyleCI](https://github.styleci.io/repos/271911972/shield?style=flat-square&branch=develop)](https://github.styleci.io/repos/271911972)
+[![Build Status](https://img.shields.io/travis/wizofgoz/laravel-opentracing/master.svg?style=flat-square)](https://travis-ci.org/wizofgoz/laravel-opentracing)
+[![Coverage Status](https://img.shields.io/coveralls/github/wizofgoz/laravel-opentracing/master.svg?style=flat-square)](https://coveralls.io/github/wizofgoz/laravel-opentracing?branch=develop)
 
 Reference implementation of the OpenTracing API for Laravel including a server-less local tracer for application
 logging purposes.
@@ -19,22 +19,12 @@ Currently supported clients:
 - Jaeger: open source, end-to-end distributed tracing. See [Jaeger](https://www.jaegertracing.io/) and
     Jonah George's [Jaeger Client PHP](https://github.com/jonahgeorge/jaeger-client-php).
 
-Note that a patched version of Jaeger Client PHP is currently required to retain PHP 5.6 support. If you need that in
-your application, add the config below to your `composer.json` file in the `repositories` section.
-
-```json
-{
-    "type": "vcs",
-    "url": "https://github.com/taisph/jaeger-client-php"
-}
-```
-
 ## Installation
 
 Install the latest version using:
 
 ```bash
-composer require taisph/laravel-opentracing
+composer require wizofgoz/laravel-opentracing
 ```
 
 Copy the default configuration file to your application if you want to change it by running the command below. Note
@@ -175,13 +165,13 @@ new \GuzzleHttp\Client(
 
 ## Testing
 
-docker run --rm -it -v $(pwd):/app php:5.6-cli-alpine /bin/sh -c 'apk add --no-cache $PHPIZE_DEPS && pecl install xdebug-2.5.5 && cd app && php -dzend_extension=xdebug.so vendor/bin/phpunit'
+docker run --rm -it -v $(pwd):/app php:7.3-cli-alpine /bin/sh -c 'apk add --no-cache $PHPIZE_DEPS && pecl install xdebug-2.7.2 && cd app && php -dzend_extension=xdebug.so vendor/bin/phpunit'
 
 ## About
 
 ### Requirements
 
-- PHP 5.6 or newer.
+- PHP 7.3 or newer.
 
 ### Contributions
 

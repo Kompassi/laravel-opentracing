@@ -13,7 +13,7 @@ use LaravelOpenTracing\LocalScopeManager;
 use LaravelOpenTracing\LocalSpan;
 use LaravelOpenTracing\LocalSpanContext;
 
-class LocalScopeTest extends \PHPUnit_Framework_TestCase
+class LocalScopeTest extends TestCase
 {
     public function testCreateScopeSuccess()
     {

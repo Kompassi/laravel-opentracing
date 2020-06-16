@@ -34,10 +34,10 @@ class JaegerClient extends Client
      */
     public function getTracer()
     {
-        $transport = $this->getSender(array_get($this->config, 'agent.host'), array_get($this->config, 'agent.port'));
+        $transport = $this->getSender(Arr::get($this->config, 'agent.host'), Arr::get($this->config, 'agent.port'));
 
         return new Tracer(
-            array_get($this->config, 'service_name'),
+            Arr::get($this->config, 'service_name'),
             new RemoteReporter($transport),
             $this->getSampler(),
             true,
