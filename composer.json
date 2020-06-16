@@ -1,0 +1,52 @@
+{
+  "name": "wizofgoz/laravel-opentracing",
+  "description": "",
+  "keywords": [
+    "opentracing",
+    "laravel"
+  ],
+  "type": "library",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Jordan Gosney",
+      "email": "wizofgoz2@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.3",
+    "guzzlehttp/guzzle": "^6.2",
+    "illuminate/support": "^7.0",
+    "jonahgeorge/jaeger-client-php": "^0.6.0",
+    "opentracing/opentracing": "^1.0.0-beta6",
+    "psr/cache": "~1.0.1"
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.2.2",
+    "orchestra/testbench": "^5.0",
+    "php-coveralls/php-coveralls": "^2.2",
+    "phpunit/phpunit": "^9.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "LaravelOpenTracing\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "LaravelOpenTracing\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "LaravelOpenTracing\\TracingServiceProvider"
+      ]
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

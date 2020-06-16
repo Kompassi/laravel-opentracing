@@ -1,0 +1,11 @@
+# IntelliJ
+/.idea
+/*.iml
+/.phpstorm_helpers/
+
+# Composer
+/vendor/
+composer.lock
+
+# Test
+/build
