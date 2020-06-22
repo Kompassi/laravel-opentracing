@@ -12,11 +12,11 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
-use LaravelOpenTracing\TracingHandlerStack;
+use LaravelOpenTracing\Propagators\GuzzlePropagator;
 use LaravelOpenTracing\TracingService;
 use Mockery;
 
-class TracingHandlerStackTest extends TestCase
+class GuzzlePropagatorTest extends TestCase
 {
     public function tearDown(): void
     {
@@ -35,7 +35,7 @@ class TracingHandlerStackTest extends TestCase
         $container = [];
         $history = Middleware::history($container);
 
-        $handler = new TracingHandlerStack(new MockHandler([
+        $handler = new GuzzlePropagator(new MockHandler([
             new Response(200),
         ]));
         $handler->push($history);
