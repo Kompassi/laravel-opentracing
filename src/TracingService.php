@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2019 Tais P. Hansen
+ * Copyright 2020 Tais P. Hansen, Jordan Gosney
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,8 +10,10 @@ namespace LaravelOpenTracing;
 
 use Illuminate\Http\Request;
 use OpenTracing\Scope;
+use OpenTracing\SpanContext;
 use OpenTracing\StartSpanOptions;
 use OpenTracing\Tracer;
+use const OpenTracing\Formats\HTTP_HEADERS;
 
 class TracingService
 {
@@ -34,14 +36,15 @@ class TracingService
      * Wraps a call in a trace span.
      *
      * @param \Closure $callable
-     * @param $operationName
+     * @param string $operationName
      * @param array|StartSpanOptions $options
      * @return mixed
      * @throws \Exception
      */
-    public function trace($operationName, \Closure $callable, $options = null)
+    public function trace(string $operationName, \Closure $callable, $options = null)
     {
         $scope = $this->beginTrace($operationName, $options);
+
         try {
             return $callable();
         } finally {
@@ -52,14 +55,15 @@ class TracingService
     /**
      * Starts a new trace span.
      *
-     * @param $operationName
+     * @param string $operationName
      * @param array|StartSpanOptions $options
-     * @return \OpenTracing\Scope
+     * @return Scope
      */
-    public function beginTrace($operationName, $options = null)
+    public function beginTrace(string $operationName, $options = null): Scope
     {
         $scope = $this->tracer->startActiveSpan($operationName, $options ?: []);
         $this->scopes[] = $scope;
+
         return $scope;
     }
 
@@ -68,14 +72,16 @@ class TracingService
      *
      * @param Scope|null $scope
      */
-    public function endTrace($scope = null)
+    public function endTrace(?Scope $scope = null): void
     {
         if ($scope === null) {
             $scope = end($this->scopes);
         }
+
         $scope->close();
 
         $keys = array_keys($this->scopes, $scope, true);
+
         foreach ($keys as $key) {
             unset($this->scopes[$key]);
         }
@@ -86,16 +92,18 @@ class TracingService
      *
      * @return array
      */
-    public function getInjectHeaders()
+    public function getInjectHeaders(): array
     {
         $carrier = [];
+
         if (($span = $this->tracer->getActiveSpan()) !== null) {
             $this->tracer->inject(
                 $span->getContext(),
-                \OpenTracing\Formats\HTTP_HEADERS,
+                HTTP_HEADERS,
                 $carrier
             );
         }
+
         return $carrier;
     }
 
@@ -103,17 +111,18 @@ class TracingService
      * Extract span context from request.
      *
      * @param Request $request
-     * @return \OpenTracing\SpanContext|null
+     * @return SpanContext|null
      */
-    public function extractFromHttpRequest(Request $request)
+    public function extractFromHttpRequest(Request $request): ?SpanContext
     {
         return $this->tracer->extract(
-            \OpenTracing\Formats\HTTP_HEADERS,
+            HTTP_HEADERS,
             array_map(
                 static function ($v) {
                     if (is_array($v) && count($v) === 1) {
                         return $v[0];
                     }
+
                     return $v;
                 },
                 $request->header()

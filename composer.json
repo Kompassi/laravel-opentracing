@@ -19,7 +19,8 @@
     "illuminate/support": "^7.0",
     "jonahgeorge/jaeger-client-php": "^0.6.0",
     "opentracing/opentracing": "^1.0.0-beta6",
-    "psr/cache": "~1.0.1"
+    "psr/cache": "~1.0.1",
+    "symfony/cache": "^5.1"
   },
   "require-dev": {
     "mockery/mockery": "^1.2.2",
@@ -30,7 +31,10 @@
   "autoload": {
     "psr-4": {
       "LaravelOpenTracing\\": "src/"
-    }
+    },
+    "files": [
+      "src/Helpers/functions.php"
+    ]
   },
   "autoload-dev": {
     "psr-4": {
