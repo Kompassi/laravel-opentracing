@@ -7,11 +7,27 @@ return [
     'autostart' => false,
 
     /*
+     * Whether the job middleware should be automatically applied to all jobs.
+     */
+    'enable_jobs' => false,
+
+    /*
      * Type of client to use for tracing.
      *
      * Currently either 'local' or 'jaeger'.
      */
     'type' => 'local',
+
+    /*
+     * Resolvers used for generating tags for spans.
+     */
+    'tags' => [
+        'middleware' => [
+            'request' => \LaravelOpenTracing\Resolvers\RequestTagResolver::class,
+            'response' => \LaravelOpenTracing\Resolvers\ResponseTagResolver::class,
+        ],
+        'query' => \LaravelOpenTracing\Resolvers\QueryTagResolver::class,
+    ],
 
     /*
      * Client specific settings.
@@ -66,5 +82,5 @@ return [
                 'param' => env('JAEGER_SAMPLER_PARAM', 0),
             ],
         ],
-    ]
+    ],
 ];

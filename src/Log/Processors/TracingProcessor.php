@@ -1,14 +1,15 @@
 <?php
 /**
- * Copyright 2019 Tais P. Hansen
+ * Copyright 2020 Tais P. Hansen, Jordan Gosney
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace LaravelOpenTracing\Log\Processor;
+namespace LaravelOpenTracing\Log\Processors;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Monolog\Processor\ProcessorInterface;
 use OpenTracing\Span;
 use OpenTracing\Tracer;
 
@@ -30,12 +31,13 @@ use OpenTracing\Tracer;
  * });
  * ```
  */
-class LocalTracerProcessor
+class TracingProcessor implements ProcessorInterface
 {
     public function __invoke(array $record)
     {
-        /** @var \LaravelOpenTracing\LocalSpan $span */
+        /** @var Span $span */
         $span = null;
+
         if ($tracer = app(Tracer::class)) {
             /** @var Tracer $tracer */
             try {

@@ -54,7 +54,7 @@ $app->register(\LaravelOpenTracing\TracingServiceProvider::class);
 
 // Enable tracing span context in log messages.
 $app->configureMonologUsing(function (\Monolog\Logger $logger) {
-    $logger->pushProcessor(new \LaravelOpenTracing\Log\Processor\LocalTracerProcessor());
+    $logger->pushProcessor(new \LaravelOpenTracing\Log\Processors\TracingProcessor());
 });
 
 // Return the application.
@@ -63,11 +63,13 @@ return $app;
 
 ### Tracing
 
-To trace a specific process in your application you can wrap the process in a trace closure like below. This will take
+To trace a specific process in your application you can wrap the process in a trace closure using the provided facade as shown below. This will take
 care of starting a new trace span and closing it again when the closure either returns or throws.
 
 ```php
-$items = app(\LaravelOpenTracing\TracingService::class)->trace(
+<?php
+
+$items = \LaravelOpenTracing\Facades\Tracing::trace(
     'todo.get_list_items',
     function () {
         return \App\Models\TodoListItem::get();
@@ -78,11 +80,13 @@ $items = app(\LaravelOpenTracing\TracingService::class)->trace(
 Nested traces are also possible like below. It will automatically take care of the span child/parent relations.
 
 ```php
+<?php
+
 function a() {
     // We don't care about tracing this specifically.
     doSomething();
 
-    app(\LaravelOpenTracing\TracingService::class)->trace(
+    \LaravelOpenTracing\Facades\Tracing::trace(
         'app.do_something_else',
         function () {
             doSomethingElse();
@@ -90,7 +94,7 @@ function a() {
     );
 }
 
-app(\LaravelOpenTracing\TracingService::class)->trace(
+\LaravelOpenTracing\Facades\Tracing::trace(
     'app.do_stuff',
     function () {
         a();
@@ -101,9 +105,11 @@ app(\LaravelOpenTracing\TracingService::class)->trace(
 If you want to add context information or tags to your spans, it is possible like below.
 
 ```php
+<?php
+
 $title = 'Make more coffee';
 
-$item = app(\LaravelOpenTracing\TracingService::class)->trace(
+$item = \LaravelOpenTracing\Facades\Tracing::trace(
     'todo.store_item',
     function () use ($title) {
         return \App\Models\TodoListItem::create(['title' => $title]);
@@ -112,16 +118,68 @@ $item = app(\LaravelOpenTracing\TracingService::class)->trace(
 );
 ```
 
-### Tracing Jobs
-
-Configure your dispatcher to pipe jobs through the tracing pipe. This is similar to middleware, only for jobs.
+Helper functions are provided for all functions available on the facade.
 
 ```php
 <?php
 
-app(\Illuminate\Bus\Dispatcher::class)->pipeThrough([
-    \LaravelOpenTracing\TracingJobPipe::class,
-]);
+trace(
+    'todo.store_item',
+    function () use ($title) {
+        return \App\Models\TodoListItem::create(['title' => $title]);
+    },
+    ['tags' => ['title' => $title]]
+);
+```
+
+### Common Tags
+
+This package provides resolvers for common tags from a given context such as an Eloquent Query Builder, Request object, or Response object. These can be overridden in configuration like below.
+```php
+/*
+ * Resolvers used for generating tags for spans.
+ */
+'tags' => [
+    'middleware' => [
+        'request' => \LaravelOpenTracing\Resolvers\RequestTagResolver::class,
+        'response' => \LaravelOpenTracing\Resolvers\ResponseTagResolver::class,
+    ],
+    'query' => \LaravelOpenTracing\Resolvers\QueryTagResolver::class,
+],
+```
+
+There are helper functions available for deriving tags from contexts based on the current configuration.
+
+```php
+<?php
+/** @var \Illuminate\Database\Query\Builder $builder */
+$tags = query_tags($builder);
+
+/** @var \Illuminate\Http\Request $request */
+$tags = request_tags($request);
+
+/** @var \Illuminate\Http\Response $response */
+$tags = response_tags($response);
+```
+
+### Tracing Jobs
+
+All jobs can be automatically traced by using the `enable_jobs` boolean in the configuration file or for tracing on certain jobs, attach the provided middleware to the ones you wish to trace.
+
+```php
+<?php
+
+// Add to job classes
+
+/**
+ * Get the middleware the job should pass through.
+ *
+ * @return array
+ */
+public function middleware()
+{
+    return [new \LaravelOpenTracing\Jobs\Middleware\Tracing];
+}
 ```
 
 ### Tracing Across Service Boundaries
@@ -152,7 +210,7 @@ HTTP request to the external service.
 
 new \GuzzleHttp\Client(
     [
-        'handler' => new \LaravelOpenTracing\TracingHandlerStack(),
+        'handler' => new \LaravelOpenTracing\Propagators\GuzzlePropagator(),
         'headers' => [
             'cache-control' => 'no-cache',
             'content-type' => 'application/json',
@@ -175,7 +233,7 @@ docker run --rm -it -v $(pwd):/app php:7.3-cli-alpine /bin/sh -c 'apk add --no-c
 
 ### Contributions
 
-Bugs and feature requests are tracked on [GitHub](https://github.com/taisph/laravel-opentracing/issues).
+Bugs and feature requests are tracked on [GitHub](https://github.com/Wizofgoz/laravel-opentracing/issues).
 
 ### License
 

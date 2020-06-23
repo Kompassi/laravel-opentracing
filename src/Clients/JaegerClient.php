@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2019 Tais P. Hansen
+ * Copyright 2020 Tais P. Hansen, Jordan Gosney
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,12 +13,12 @@ use Jaeger\Reporter\RemoteReporter;
 use Jaeger\Sampler\ConstSampler;
 use Jaeger\Sampler\ProbabilisticSampler;
 use Jaeger\Sampler\RateLimitingSampler;
+use Jaeger\Sampler\SamplerInterface;
 use Jaeger\Sender\UdpSender;
 use Jaeger\Thrift\Agent\AgentClient;
 use Jaeger\ThriftUdpTransport;
 use Jaeger\Tracer;
 use Jaeger\Util\RateLimiter;
-use LaravelOpenTracing\Cache\CacheItemPool;
 use Thrift\Exception\TTransportException;
 use Thrift\Protocol\TCompactProtocol;
 use Thrift\Transport\TBufferedTransport;
@@ -32,7 +32,7 @@ class JaegerClient extends Client
      * @return \OpenTracing\Tracer
      * @throws \Exception
      */
-    public function getTracer()
+    public function getTracer(): \OpenTracing\Tracer
     {
         $transport = $this->getSender(Arr::get($this->config, 'agent.host'), Arr::get($this->config, 'agent.port'));
 
@@ -49,7 +49,11 @@ class JaegerClient extends Client
         );
     }
 
-    private function getSampler()
+    /**
+     * @return SamplerInterface
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
+    private function getSampler(): SamplerInterface
     {
         $type = Arr::get($this->config, 'sampler.type');
         $param = Arr::get($this->config, 'sampler.param');
@@ -71,7 +75,7 @@ class JaegerClient extends Client
             return new RateLimitingSampler(
                 $param ?: 0,
                 new RateLimiter(
-                    new CacheItemPool(app('cache')->store()),
+                    app('cache.psr6'),
                     'opentracing.rate.current_balance',
                     'opentracing.rate.last_tick'
                 )
@@ -81,7 +85,12 @@ class JaegerClient extends Client
         throw new \RuntimeException('Unknown sampler type: ' . $type);
     }
 
-    private function getSender($hostname, $port = null)
+    /**
+     * @param string|null $hostname
+     * @param int|null $port
+     * @return UdpSender
+     */
+    private function getSender(?string $hostname, ?int $port): UdpSender
     {
         $udp = new ThriftUdpTransport(
             $hostname ?: 'localhost',
