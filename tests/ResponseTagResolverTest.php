@@ -15,11 +15,6 @@ use const OpenTracing\Tags\HTTP_STATUS_CODE;
 
 class ResponseTagResolverTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
     public function testResolveOk()
     {
         $resolver = new ResponseTagResolver;

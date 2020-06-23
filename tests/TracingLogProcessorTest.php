@@ -8,7 +8,7 @@
 
 namespace LaravelOpenTracing\Tests;
 
-use LaravelOpenTracing\Log\Processor\TracingProcessor;
+use LaravelOpenTracing\Log\Processors\TracingProcessor;
 use OpenTracing\Span;
 use OpenTracing\SpanContext;
 use OpenTracing\Tracer;

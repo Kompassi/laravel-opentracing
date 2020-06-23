@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace LaravelOpenTracing\Log\Processor;
+namespace LaravelOpenTracing\Log\Processors;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Monolog\Processor\ProcessorInterface;

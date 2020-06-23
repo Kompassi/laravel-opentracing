@@ -54,7 +54,7 @@ $app->register(\LaravelOpenTracing\TracingServiceProvider::class);
 
 // Enable tracing span context in log messages.
 $app->configureMonologUsing(function (\Monolog\Logger $logger) {
-    $logger->pushProcessor(new \LaravelOpenTracing\Log\Processor\TracingProcessor());
+    $logger->pushProcessor(new \LaravelOpenTracing\Log\Processors\TracingProcessor());
 });
 
 // Return the application.

@@ -10,17 +10,9 @@ namespace LaravelOpenTracing\Tests;
 
 use LaravelOpenTracing\TracingService;
 use LaravelOpenTracing\TracingServiceProvider;
-use Mockery;
 
 class TracingServiceProviderTest extends TestCase
 {
-    public function tearDown(): void
-    {
-        Mockery::close();
-
-        parent::tearDown();
-    }
-
     /**
      * @doesNotPerformAssertions
      */
