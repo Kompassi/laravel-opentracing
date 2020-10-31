@@ -1,4 +1,4 @@
-# OpenTracing for Laravel
+# OpenTracing for Laravel 8.x
 
 [![Total Downloads](https://img.shields.io/packagist/dt/wizofgoz/laravel-opentracing.svg?style=flat-square)](https://packagist.org/packages/wizofgoz/laravel-opentracing)
 [![Latest Stable Version](https://img.shields.io/packagist/v/wizofgoz/laravel-opentracing.svg?style=flat-square)](https://packagist.org/packages/wizofgoz/laravel-opentracing)
