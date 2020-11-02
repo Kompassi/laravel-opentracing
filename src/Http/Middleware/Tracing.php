@@ -42,19 +42,21 @@ class Tracing
             );
         }
 
-        if ($context === null) {
-            return $next($request);
-        }
-
         /** @var TagResolver $requestResolver */
         $requestResolver = app('opentracing.tags.request');
         /** @var TagResolver $responseResolver */
         $responseResolver = app('opentracing.tags.response');
 
-        $options = StartSpanOptions::create([
-            'child_of' => $context,
-            'tags' => $responseResolver ? $requestResolver->resolve($request) : [],
-        ]);
+        if ($context !== null) {
+            $options = StartSpanOptions::create([
+                'child_of' => $context,
+                'tags' => $responseResolver ? $requestResolver->resolve($request) : [],
+            ]);
+        } else {
+            $options = StartSpanOptions::create([
+                'tags' => $responseResolver ? $requestResolver->resolve($request) : [],
+            ]);
+        }
 
         $operationName = 'http.' . (
             $request->route()->getName() ?? strtolower($request->getMethod()) . '.' . $request->decodedPath()
