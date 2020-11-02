@@ -50,6 +50,16 @@ class TracingService
         } catch(\Exception $e) {
             $span = $scope->getSpan();
             $span->setTag('error', true);
+            $span->log(
+                [
+                    'ExceptionClass' => get_class($e),
+                    'ExceptionCode' => $e->getCode(),
+                    'ExceptionMessage' => $e->getMessage(),
+                    'ExceptionFile' => $e->getFile(),
+                    'ExceptionLine' => $e->getLine(),
+                    'ExecptionTrace' => $e->getTraceAsString()
+                ]
+            );
 
             throw $e;
         } finally {
