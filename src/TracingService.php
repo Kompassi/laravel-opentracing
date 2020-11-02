@@ -47,6 +47,11 @@ class TracingService
 
         try {
             return $callable();
+        } catch(\Exception $e) {
+            $span = $scope->getSpan();
+            $span->setTag('error', true);
+
+            throw $e;
         } finally {
             $this->endTrace($scope);
         }
