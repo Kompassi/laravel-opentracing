@@ -105,7 +105,7 @@ class TracingServiceProvider extends ServiceProvider
         $this->app->terminating(
             function () {
                 try {
-                    $this->app->make(Span::class)->finish();
+                    app('opentracing')->endAllTraces();
                 } catch (\Exception $e) {
                     // Passthrough.
                 }
