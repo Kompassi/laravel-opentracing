@@ -58,9 +58,7 @@ class Tracing
             ]);
         }
 
-        $operationName = 'http.' . (
-            $request->route()->getName() ?? strtolower($request->getMethod()) . '.' . $request->decodedPath()
-        );
+        $operationName = 'http.' . strtolower($request->getMethod()) . ':' . $request->decodedPath();
 
         $scope = $service->beginTrace($operationName, $options);
 
