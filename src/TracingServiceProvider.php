@@ -10,7 +10,9 @@ namespace LaravelOpenTracing;
 
 use Illuminate\Bus\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use LaravelOpenTracing\Clients\ClientInterface;
 use LaravelOpenTracing\Clients\JaegerClient;
@@ -18,6 +20,7 @@ use LaravelOpenTracing\Clients\LocalClient;
 use LaravelOpenTracing\Jobs\Middleware\Tracing;
 use OpenTracing\GlobalTracer;
 use OpenTracing\Span;
+use OpenTracing\StartSpanOptions;
 use OpenTracing\Tracer;
 
 class TracingServiceProvider extends ServiceProvider
@@ -45,6 +48,10 @@ class TracingServiceProvider extends ServiceProvider
         $this->registerTagResolvers();
 
         $this->registerTerminatingCallback();
+
+        if (config('tracing.enable_query_tracing')) {
+            $this->registerQueryListener();
+        }
     }
 
     public function registerTracer()
@@ -113,6 +120,34 @@ class TracingServiceProvider extends ServiceProvider
                 $this->app->make(Tracer::class)->flush();
             }
         );
+    }
+
+    public function registerQueryListener() {
+        DB::listen(function(QueryExecuted $query) {
+            $endTime = (int) round(microtime(true) * 1000000);
+            $duration = (int) round($query->time*1000);
+
+            $scope = \LaravelOpenTracing\Facades\Tracing::beginTrace(
+                'db::query',
+                [
+                    'start_time' => (int) ($endTime - $duration),
+                    'finish_span_on_close' => false,
+                    'tags' => [
+                        'connection' => $query->connectionName,
+                        'query' => $query->sql
+                    ],
+                ]
+            );
+
+            $span = $scope->getSpan();
+            if (config('app.debug') === true) {
+                $bindings = implode(',', $query->bindings);
+                $span->setTag('bindings', $bindings);
+            }
+
+            \LaravelOpenTracing\Facades\Tracing::endTrace($scope);
+            $span->finish($endTime);
+        });
     }
 
     /**
