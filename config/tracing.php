@@ -12,6 +12,11 @@ return [
     'enable_jobs' => false,
 
     /*
+     * Whether the DB::Queries should be automatically traced on all queries
+     */
+    'enable_query_tracing' => env('OPENTRACING_TRACE_QUERIES', false),
+
+    /*
      * Type of client to use for tracing.
      *
      * Currently either 'local' or 'jaeger'.

@@ -82,6 +82,23 @@ class TracingService
         return $scope;
     }
 
+
+    /**
+     * Ends all the traces in the scope
+     */
+    public function endAllTraces(): void {
+        $c = count($this->scopes);
+        for($i=$c; $i>0; $i--) {
+            $scope = $this->scopes[$i-1];
+            $scopeEndTime = $scope->getSpan()->getEndTime();
+
+            if ($scopeEndTime === null) {
+                $scope->getSpan()->setTag('error', true);
+                $this->endTrace($scope);
+            }
+        }
+    }
+
     /**
      * Ends the specified or last started trace span.
      *
@@ -94,12 +111,6 @@ class TracingService
         }
 
         $scope->close();
-
-        $keys = array_keys($this->scopes, $scope, true);
-
-        foreach ($keys as $key) {
-            unset($this->scopes[$key]);
-        }
     }
 
     /**
