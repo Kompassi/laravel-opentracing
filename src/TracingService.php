@@ -14,6 +14,7 @@ use OpenTracing\SpanContext;
 use OpenTracing\StartSpanOptions;
 use OpenTracing\Tracer;
 use const OpenTracing\Formats\HTTP_HEADERS;
+use const OpenTracing\Formats\TEXT_MAP;
 
 class TracingService
 {
@@ -131,6 +132,29 @@ class TracingService
         }
 
         return $carrier;
+    }
+
+    /**
+     * Extract span context from array.
+     *
+     * @param array $array
+     * @return SpanContext|null
+     */
+    public function extractFromArray(array $array): ?SpanContext
+    {
+        return $this->tracer->extract(
+            TEXT_MAP,
+            array_map(
+                static function ($v) {
+                    if (is_array($v) && count($v) === 1) {
+                        return $v[0];
+                    }
+
+                    return $v;
+                },
+                $array
+            )
+        );
     }
 
     /**
