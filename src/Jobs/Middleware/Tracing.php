@@ -42,14 +42,20 @@ class Tracing
      */
     public function handle($job, \Closure $next)
     {
-        $res = app(TracingService::class)->trace(
-            'job.' . strtolower(str_replace('\\', '.', get_class($job))),
-            static function () use ($next, $job) {
-                return $next($job);
-            },
-            $this->options
-        );
-        app(Tracer::class)->flush();
+        try {
+            $res = app(TracingService::class)->trace(
+                'job.' . strtolower(str_replace('\\', '.', get_class($job))),
+                static function () use ($next, $job) {
+                    return $next($job);
+                },
+                $this->options
+            );
+        } catch (\Exception $e) {
+            throw $e;
+        } finally {
+            app(Tracer::class)->flush();
+        }
+
         return $res;
     }
 }
