@@ -51,6 +51,7 @@ class TracingService
         } catch(\Exception $e) {
             $span = $scope->getSpan();
             $span->setTag('error', true);
+            $headOfTrace = array_slice(explode("\n", $e->getTraceAsString()),0, 4);
             $span->log(
                 [
                     'ExceptionClass' => get_class($e),
@@ -58,7 +59,7 @@ class TracingService
                     'ExceptionMessage' => $e->getMessage(),
                     'ExceptionFile' => $e->getFile(),
                     'ExceptionLine' => $e->getLine(),
-                    'ExecptionTrace' => $e->getTraceAsString()
+                    'ExecptionTrace' => implode("\n", $headOfTrace),
                 ]
             );
 
